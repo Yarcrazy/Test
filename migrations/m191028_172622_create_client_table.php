@@ -19,7 +19,7 @@ class m191028_172622_create_client_table extends Migration
       'nds' => $this->boolean(),
       'city_id' => $this->integer()->notNull(),
       'text' => $this->text(),
-      'logo_id' => $this->integer()->notNull(),
+      'logo_id' => $this->integer(),
       'created_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
       'updated_at' => $this->timestamp()->notNull()->defaultExpression('CURRENT_TIMESTAMP'),
     ]);

@@ -36,7 +36,7 @@ class Client extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'city_id', 'logo_id'], 'required'],
+            [['name', 'city_id'], 'required'],
             [['nds', 'city_id', 'logo_id'], 'integer'],
             [['text'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
