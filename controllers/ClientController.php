@@ -2,9 +2,11 @@
 
 namespace app\controllers;
 
+use app\models\City;
 use Yii;
 use app\models\Client;
 use yii\data\ActiveDataProvider;
+use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -14,114 +16,139 @@ use yii\filters\VerbFilter;
  */
 class ClientController extends Controller
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function behaviors()
-    {
-        return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['POST'],
-                ],
-            ],
-        ];
+  /**
+   * {@inheritdoc}
+   */
+  public function behaviors()
+  {
+    return [
+      'verbs' => [
+        'class' => VerbFilter::className(),
+        'actions' => [
+          'delete' => ['POST'],
+        ],
+      ],
+    ];
+  }
+
+  /**
+   * Lists all Client models.
+   * @return mixed
+   */
+  public function actionIndex()
+  {
+    $dataProvider = new ActiveDataProvider([
+      'query' => Client::find(),
+    ]);
+
+    return $this->render('index', [
+      'dataProvider' => $dataProvider,
+    ]);
+  }
+
+
+  /**
+   * Generates cities list for client
+   * @param null $q input phrase
+   * @param null $id city.id
+   * @return array
+   */
+  public function actionCityList($q = null, $id = null)
+  {
+    \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
+    $out = ['results' => ['id' => '', 'text' => '']];
+    if (!is_null($q)) {
+      $query = new Query;
+      $query->select('id, name AS text')
+        ->from('city')
+        ->where(['like', 'name', $q])
+        ->limit(20);
+      $data = $query->all();
+      $out['results'] = array_values($data);
+    } elseif ($id > 0) {
+      $out['results'] = ['id' => $id, 'text' => City::findOne($id)->name];
+    }
+    return $out;
+  }
+
+  /**
+   * Displays a single Client model.
+   * @param integer $id
+   * @return mixed
+   * @throws NotFoundHttpException if the model cannot be found
+   */
+  public function actionView($id)
+  {
+    return $this->render('view', [
+      'model' => $this->findModel($id),
+    ]);
+  }
+
+  /**
+   * Creates a new Client model.
+   * If creation is successful, the browser will be redirected to the 'view' page.
+   * @return mixed
+   */
+  public function actionCreate()
+  {
+    $model = new Client();
+
+    if ($model->load(Yii::$app->request->post()) && $model->save()) {
+      return $this->redirect(['view', 'id' => $model->id]);
     }
 
-    /**
-     * Lists all Client models.
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $dataProvider = new ActiveDataProvider([
-            'query' => Client::find(),
-        ]);
+    return $this->render('create', [
+      'model' => $model,
+    ]);
+  }
 
-        return $this->render('index', [
-            'dataProvider' => $dataProvider,
-        ]);
+  /**
+   * Updates an existing Client model.
+   * If update is successful, the browser will be redirected to the 'view' page.
+   * @param integer $id
+   * @return mixed
+   * @throws NotFoundHttpException if the model cannot be found
+   */
+  public function actionUpdate($id)
+  {
+    $model = $this->findModel($id);
+
+    if ($model->load(Yii::$app->request->post()) && $model->save()) {
+      return $this->redirect(['view', 'id' => $model->id]);
     }
 
-    /**
-     * Displays a single Client model.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionView($id)
-    {
-        return $this->render('view', [
-            'model' => $this->findModel($id),
-        ]);
+    return $this->render('update', [
+      'model' => $model,
+    ]);
+  }
+
+  /**
+   * Deletes an existing Client model.
+   * If deletion is successful, the browser will be redirected to the 'index' page.
+   * @param integer $id
+   * @return mixed
+   * @throws NotFoundHttpException if the model cannot be found
+   */
+  public function actionDelete($id)
+  {
+    $this->findModel($id)->delete();
+
+    return $this->redirect(['index']);
+  }
+
+  /**
+   * Finds the Client model based on its primary key value.
+   * If the model is not found, a 404 HTTP exception will be thrown.
+   * @param integer $id
+   * @return Client the loaded model
+   * @throws NotFoundHttpException if the model cannot be found
+   */
+  protected function findModel($id)
+  {
+    if (($model = Client::findOne($id)) !== null) {
+      return $model;
     }
 
-    /**
-     * Creates a new Client model.
-     * If creation is successful, the browser will be redirected to the 'view' page.
-     * @return mixed
-     */
-    public function actionCreate()
-    {
-        $model = new Client();
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('create', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Updates an existing Client model.
-     * If update is successful, the browser will be redirected to the 'view' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionUpdate($id)
-    {
-        $model = $this->findModel($id);
-
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
-        }
-
-        return $this->render('update', [
-            'model' => $model,
-        ]);
-    }
-
-    /**
-     * Deletes an existing Client model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
-    }
-
-    /**
-     * Finds the Client model based on its primary key value.
-     * If the model is not found, a 404 HTTP exception will be thrown.
-     * @param integer $id
-     * @return Client the loaded model
-     * @throws NotFoundHttpException if the model cannot be found
-     */
-    protected function findModel($id)
-    {
-        if (($model = Client::findOne($id)) !== null) {
-            return $model;
-        }
-
-        throw new NotFoundHttpException('The requested page does not exist.');
-    }
+    throw new NotFoundHttpException('The requested page does not exist.');
+  }
 }
