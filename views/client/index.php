@@ -29,12 +29,13 @@ $this->params['breadcrumbs'][] = $this->title;
             'phone',
             'nds',
             'city_id',
-            //'text:ntext',
-            //'logo_id',
-            //'created_at',
-            //'updated_at',
+            'text:ntext',
+            'logo_id',
+            'created_at',
+            'updated_at',
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn',
+							'template' => '{update} {delete}'],
         ],
     ]); ?>
 
