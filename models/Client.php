@@ -54,9 +54,9 @@ class Client extends \yii\db\ActiveRecord
             'name' => 'Name',
             'phone' => 'Phone',
             'nds' => 'Nds',
-            'city_id' => 'City ID',
+            'city_id' => 'City',
             'text' => 'Text',
-            'logo_id' => 'Logo ID',
+            'logo_id' => 'Logo',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
         ];
