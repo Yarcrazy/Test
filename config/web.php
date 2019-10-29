@@ -47,6 +47,9 @@ $config = [
       'enablePrettyUrl' => true,
       'showScriptName' => false,
       'rules' => [
+        '<controller:(client)>s' => '<controller>/index',
+        'cities' => 'city/index',
+        '<controller:(client)>s/<id:\d+>/<action:(view|update|delete)>' => '<controller>/<action>',
       ],
     ],
   ],
