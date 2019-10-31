@@ -45,7 +45,16 @@ use yii\widgets\ActiveForm;
 
     <?= $form->field($model, 'text')->textarea(['rows' => 6]) ?>
 
-    <?= $form->field($model, 'logo_id')->textInput() ?>
+    <?php
+    if (!empty($model->logo_id)) {
+      echo Html::img('/uploads/img/' . $model->logo->name, ['style'=>'width:100px;height:100px;']);
+      echo Html::a('X', ['/files/delete', 'id' => $model->logo_id], [
+        'data' => [
+          'confirm' => 'Вы уверены что хотите удалить лого?'
+        ],
+				]);
+    }
+		echo $form->field($model, 'clientLogo')->fileInput(); ?>
 
     <div class="form-group">
         <?= Html::submitButton('Save', ['class' => 'btn btn-success']) ?>

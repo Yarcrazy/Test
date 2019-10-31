@@ -10,6 +10,7 @@ use yii\db\Query;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * ClientController implements the CRUD actions for Client model.
@@ -92,11 +93,13 @@ class ClientController extends Controller
   public function actionCreate()
   {
     $model = new Client();
-
     if ($model->load(Yii::$app->request->post()) && $model->save()) {
-      return $this->redirect(['view', 'id' => $model->id]);
-    }
+      $model->clientLogo = UploadedFile::getInstance($model, 'clientLogo');
 
+      if ($model->uploadClientLogo()) {
+        return $this->redirect(['view', 'id' => $model->id]);
+      }
+    }
     return $this->render('create', [
       'model' => $model,
     ]);
@@ -113,8 +116,14 @@ class ClientController extends Controller
   {
     $model = $this->findModel($id);
 
-    if ($model->load(Yii::$app->request->post()) && $model->save()) {
-      return $this->redirect(['view', 'id' => $model->id]);
+    if (Yii::$app->request->isPost) {
+      $model->clientLogo = UploadedFile::getInstance($model, 'clientLogo');
+
+      if ($model->uploadClientLogo()) {
+        if ($model->load(Yii::$app->request->post()) && $model->save()) {
+          return $this->redirect(['view', 'id' => $model->id]);
+        }
+      }
     }
 
     return $this->render('update', [
@@ -122,7 +131,7 @@ class ClientController extends Controller
     ]);
   }
 
-  /**
+  /**c
    * Deletes an existing Client model.
    * If deletion is successful, the browser will be redirected to the 'index' page.
    * @param integer $id

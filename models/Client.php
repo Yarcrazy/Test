@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use yii\web\UploadedFile;
 
 /**
  * This is the model class for table "client".
@@ -20,70 +21,92 @@ namespace app\models;
  */
 class Client extends \yii\db\ActiveRecord
 {
-    /**
-     * {@inheritdoc}
-     */
-    public static function tableName()
-    {
-        return 'client';
-    }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function rules()
-    {
-        return [
-            [['name', 'city_id'], 'required'],
-            [['nds', 'city_id', 'logo_id'], 'integer'],
-            [['text'], 'string'],
-            [['created_at', 'updated_at'], 'safe'],
-            [['name', 'phone'], 'string', 'max' => 255],
-            [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::className(), 'targetAttribute' => ['city_id' => 'id']],
-            [['logo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Files::className(), 'targetAttribute' => ['logo_id' => 'id']],
-        ];
-    }
+  /**
+   * @var UploadedFile
+   */
+  public $clientLogo;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function attributeLabels()
-    {
-        return [
-            'id' => 'ID',
-            'name' => 'Name',
-            'phone' => 'Phone',
-            'nds' => 'Nds',
-            'city_id' => 'City',
-            'text' => 'Text',
-            'logo_id' => 'Logo',
-            'created_at' => 'Created At',
-            'updated_at' => 'Updated At',
-        ];
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public static function tableName()
+  {
+    return 'client';
+  }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getCity()
-    {
-        return $this->hasOne(City::className(), ['id' => 'city_id']);
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function rules()
+  {
+    return [
+      [['name', 'city_id'], 'required'],
+      [['nds', 'city_id'], 'integer'],
+      [['text'], 'string'],
+      [['created_at', 'updated_at'], 'safe'],
+      [['name', 'phone'], 'string', 'max' => 255],
+      [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::className(), 'targetAttribute' => ['city_id' => 'id']],
+      [['logo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Files::className(), 'targetAttribute' =>
+        ['logo_id' => 'id']],
+      [['clientLogo'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+    ];
+  }
 
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getLogo()
-    {
-        return $this->hasOne(Files::className(), ['id' => 'logo_id']);
-    }
+  /**
+   * {@inheritdoc}
+   */
+  public function attributeLabels()
+  {
+    return [
+      'id' => 'ID',
+      'name' => 'Name',
+      'phone' => 'Phone',
+      'nds' => 'Nds',
+      'city_id' => 'City',
+      'text' => 'Text',
+      'logo_id' => 'Logo',
+      'created_at' => 'Created At',
+      'updated_at' => 'Updated At',
+    ];
+  }
 
-    /**
-     * {@inheritdoc}
-     * @return ClientQuery the active query used by this AR class.
-     */
-    public static function find()
-    {
-        return new ClientQuery(get_called_class());
+  /**
+   * @return \yii\db\ActiveQuery
+   */
+  public function getCity()
+  {
+    return $this->hasOne(City::className(), ['id' => 'city_id']);
+  }
+
+  /**
+   * @return \yii\db\ActiveQuery
+   */
+  public function getLogo()
+  {
+    return $this->hasOne(Files::className(), ['id' => 'logo_id']);
+  }
+
+  /**
+   * {@inheritdoc}
+   * @return ClientQuery the active query used by this AR class.
+   */
+  public static function find()
+  {
+    return new ClientQuery(get_called_class());
+  }
+
+  public function uploadClientLogo()
+  {
+    if ($this->validate()) {
+      $this->clientLogo->saveAs('uploads/img/' . $this->clientLogo->name);
+      $model = new Files();
+      $model->name = $this->clientLogo->name;
+      $model->size = $this->clientLogo->size;
+      $model->save();
+      return true;
+    } else {
+      return false;
     }
+  }
 }
