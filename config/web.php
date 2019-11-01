@@ -53,6 +53,7 @@ $config = [
       ],
     ],
   ],
+  'defaultRoute' => 'client/index',
   'params' => $params,
 ];
 
