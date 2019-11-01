@@ -62,7 +62,7 @@ class ClientController extends Controller
       $query = new Query;
       $query->select('id, name AS text')
         ->from('city')
-        ->where(['like', 'name', $q])
+        ->where(['rlike', 'name', '^' . $q])
         ->limit(20);
       $data = $query->all();
       $out['results'] = array_values($data);
