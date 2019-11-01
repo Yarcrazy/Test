@@ -42,10 +42,12 @@ class Client extends \yii\db\ActiveRecord
   public function rules()
   {
     return [
-      [['name', 'city_id'], 'required'],
+      [['name', 'phone', 'city_id'], 'required'],
       [['nds', 'city_id', 'created_at', 'updated_at'], 'integer'],
-      [['text'], 'string'],
-      [['name', 'phone'], 'string', 'max' => 255],
+      [['text', 'phone'], 'string'],
+      [['name'], 'string', 'max' => 128],
+      ['phone', 'match', 'pattern' => '/^\+7 \(\d{3}\) \d{3} \d{2} \d{2}$/',
+        'message' => 'Телефон должен быть в формате +7 (XXX) XXX XX XX'],
       [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::className(), 'targetAttribute' => ['city_id' => 'id']],
       [['logo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Files::className(), 'targetAttribute' =>
         ['logo_id' => 'id']],
