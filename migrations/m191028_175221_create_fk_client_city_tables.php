@@ -13,7 +13,7 @@ class m191028_175221_create_fk_client_city_tables extends Migration
     public function safeUp()
     {
       $this->addForeignKey('fk_client_city', 'client', ['city_id'], 'city',
-        ['id'], 'CASCADE');
+        ['id']);
     }
 
     /**

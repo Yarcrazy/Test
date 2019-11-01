@@ -13,7 +13,7 @@ class m191028_175042_create_fk_client_files_tables extends Migration
     public function safeUp()
     {
       $this->addForeignKey('fk_client_files', 'client', ['logo_id'], 'files',
-        ['id'], 'CASCADE');
+        ['id'], 'SET NULL');
     }
 
     /**
