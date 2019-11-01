@@ -1,6 +1,7 @@
 <?php
 
 namespace app\models;
+use yii\behaviors\TimestampBehavior;
 use yii\web\UploadedFile;
 
 /**
@@ -42,14 +43,20 @@ class Client extends \yii\db\ActiveRecord
   {
     return [
       [['name', 'city_id'], 'required'],
-      [['nds', 'city_id'], 'integer'],
+      [['nds', 'city_id', 'created_at', 'updated_at'], 'integer'],
       [['text'], 'string'],
-      [['created_at', 'updated_at'], 'safe'],
       [['name', 'phone'], 'string', 'max' => 255],
       [['city_id'], 'exist', 'skipOnError' => true, 'targetClass' => City::className(), 'targetAttribute' => ['city_id' => 'id']],
       [['logo_id'], 'exist', 'skipOnError' => true, 'targetClass' => Files::className(), 'targetAttribute' =>
         ['logo_id' => 'id']],
       [['clientLogo'], 'file', 'skipOnEmpty' => true, 'extensions' => 'png, jpg, jpeg'],
+    ];
+  }
+
+  public function behaviors()
+  {
+    return [
+      TimestampBehavior::class,
     ];
   }
 
@@ -103,7 +110,9 @@ class Client extends \yii\db\ActiveRecord
       $model = new Files();
       $model->name = $this->clientLogo->name;
       $model->size = $this->clientLogo->size;
-      $model->save();
+      if ($model->save(false)) {
+        $model->link('clients', $this);
+      }
       return true;
     } else {
       return false;
