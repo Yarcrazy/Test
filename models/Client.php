@@ -105,7 +105,7 @@ class Client extends \yii\db\ActiveRecord
 
   public function uploadClientLogo()
   {
-    if ($this->validate()) {
+    if ($this->clientLogo instanceof UploadedFile) {
       $this->clientLogo->saveAs('uploads/img/' . $this->clientLogo->name);
       $model = new Files();
       $model->name = $this->clientLogo->name;

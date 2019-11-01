@@ -96,9 +96,8 @@ class ClientController extends Controller
     if ($model->load(Yii::$app->request->post()) && $model->save()) {
       $model->clientLogo = UploadedFile::getInstance($model, 'clientLogo');
 
-      if ($model->uploadClientLogo()) {
-        return $this->redirect(['view', 'id' => $model->id]);
-      }
+      $model->uploadClientLogo();
+      return $this->redirect(['view', 'id' => $model->id]);
     }
     return $this->render('create', [
       'model' => $model,
@@ -116,14 +115,10 @@ class ClientController extends Controller
   {
     $model = $this->findModel($id);
 
-    if (Yii::$app->request->isPost) {
+    if ($model->load(Yii::$app->request->post()) && $model->save()) {
       $model->clientLogo = UploadedFile::getInstance($model, 'clientLogo');
-
-      if ($model->uploadClientLogo()) {
-        if ($model->load(Yii::$app->request->post()) && $model->save()) {
-          return $this->redirect(['view', 'id' => $model->id]);
-        }
-      }
+      $model->uploadClientLogo();
+      return $this->redirect(['view', 'id' => $model->id]);
     }
 
     return $this->render('update', [
