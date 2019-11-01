@@ -15,7 +15,7 @@ class m191028_172622_create_client_table extends Migration
     $this->createTable('{{%client}}', [
       'id' => $this->primaryKey(),
       'name' => $this->string()->notNull(),
-      'phone' => $this->string(),
+      'phone' => $this->string()->notNull(),
       'nds' => $this->boolean(),
       'city_id' => $this->integer()->notNull(),
       'text' => $this->text(),
