@@ -47,7 +47,7 @@ use yii\widgets\ActiveForm;
 
     <?php
     if (!empty($model->logo_id)) {
-      echo Html::img('/uploads/img/' . $model->logo->name, ['style'=>'width:100px;height:100px;']);
+      echo Html::img('/uploads/img/' . $model->logo->name, ['style'=>'width:200px']);
       echo Html::a('X', ['/files/delete', 'id' => $model->logo_id], [
         'data' => [
           'confirm' => 'Вы уверены что хотите удалить лого?'
