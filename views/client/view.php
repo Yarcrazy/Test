@@ -36,8 +36,8 @@ $this->params['breadcrumbs'][] = $this->title;
             'city_id',
             'text:ntext',
             'logo_id',
-            'created_at',
-            'updated_at',
+            'created_at:datetime',
+            'updated_at:datetime',
         ],
     ]) ?>
 
